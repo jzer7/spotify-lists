@@ -1,0 +1,84 @@
+[project]
+name            = "spotify_lists"
+version         = "0.1.0"
+description     = "Work with Spotify Playlists"
+authors         = [
+    { name = "Juan Rubio", email = "jcrubio@gmail.com" },
+]
+dependencies    = [
+    "click>=8.3.1",                                         # CLI framework
+    "python-dotenv>=1.2.2",                                 #
+    "pyyaml>=6.0.3",                                        #
+    "spotipy>=2.26.0",                                      # Spotify API
+]
+readme          = "README.md"
+requires-python = ">=3.12"
+
+[dependency-groups]
+dev = [
+    "bandit[toml]>=1.9.4",                                  # Security assessment
+    "hypothesis[cli]>=6.151.9",                             #
+    "mypy>=1.19.1",                                         # Python typing
+    "pre-commit>=4.5.1",                                    #
+    "pytest-cov>=7.1.0",                                    # Test coverage
+    "pytest-mock>=3.15.1",                                  #
+    "pytest>=9.0.2",                                        # Testing framework
+    "python-call-graph>=2.1.6",                             #
+    "ruff>=0.15.7",                                         # Linter and Formatter for Python
+    "ty>=0.0.24",                                           #
+    "types-psutil>=7.2.2.20260130",                         #
+    "uv-bump>=0.4.2",                                       # Update versions in pyproject.toml
+    "vulture>=2.15",                                        # Dead code analysis
+    "types-pyyaml>=6.0.12.20250915",                        # Stub with types for PyYAML
+]
+
+[project.urls]
+Homepage   = "https://github.com/jzer7/spotify-lists"
+Repository = "https://github.com/jzer7/spotify-lists"
+
+[tool.coverage.html]
+directory = "coverage_html_report"
+
+[tool.coverage.report]
+
+[tool.coverage.run]
+branch = true
+
+[tool.mypy]
+files = [
+    "src",
+    "tests",
+]
+check_untyped_defs          = true
+disallow_any_generics       = true
+disallow_any_unimported     = true # To offset someone having 'ignore_missing_imports'
+disallow_incomplete_defs    = true
+disallow_untyped_decorators = true
+disallow_untyped_defs       = true # TOP
+no_implicit_optional        = true
+show_error_codes            = true
+warn_redundant_casts        = true
+warn_return_any             = true
+warn_unreachable            = true
+warn_unused_ignores         = true
+
+exclude = ["backups/", "build", "dist", ".venv"]
+
+[tool.pytest.ini_options]
+addopts = "--cov=. --no-cov-on-fail --cov-fail-under=80.0 --strict-config --strict-markers"
+pythonpath = ["src"]
+testpaths = [
+    "tests",
+]
+
+[tool.ruff]
+line-length = 120
+src = [
+    "src",
+]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.uv]
+package = true
