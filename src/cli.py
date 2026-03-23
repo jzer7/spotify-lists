@@ -67,13 +67,13 @@ def download(id: str | None, download_all: bool) -> None:
 
     if download_all:
         playlists_meta = get_all_playlists_metadata(sp)
-        for pl_meta in playlists_meta:
-            try:
-                pl = get_full_playlist(sp, pl_meta["id"])
-                save_playlist(pl, PLAYLISTS_DIR)
-                logger.info(f"Playlist '{pl.name}' saved to {PLAYLISTS_DIR / f'{pl.id}.yaml'}")
-            except Exception as e:
-                logger.error(f"Failed to download playlist {pl_meta['name']} ({pl_meta['id']}): {e}")
+        with click.progressbar(playlists_meta, label="Downloading playlists") as bar:
+            for pl_meta in bar:
+                try:
+                    pl = get_full_playlist(sp, pl_meta["id"])
+                    save_playlist(pl, PLAYLISTS_DIR)
+                except Exception as e:
+                    logger.error(f"Failed to download playlist {pl_meta['name']} ({pl_meta['id']}): {e}")
         logger.info(f"Downloaded {len(playlists_meta)} playlists.")
     else:
         logger.error("Please specify --id or --all")
