@@ -1,6 +1,6 @@
 import spotipy
 
-from src.models import Playlist, Track
+from .models import Playlist, Track
 
 
 def get_all_playlists_metadata(sp: spotipy.Spotify) -> list[dict]:

@@ -2,7 +2,7 @@ from pathlib import Path
 
 import yaml
 
-from src.models import Playlist
+from .models import Playlist
 
 
 def save_playlist(playlist: Playlist, directory: Path) -> None:

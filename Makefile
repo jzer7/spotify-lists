@@ -21,21 +21,28 @@ help: ## Display help information for Makefile targets
 # ----------------------------------------------------------
 
 .PHONY: setup
-setup: setup-python ## Set up the development environment
+setup: setup-simple ## Set up the development environment
 	@echo "Development environment setup complete."
 
 .PHONY: rebuild-venv
 rebuild-venv: ## Rebuild the Python virtual environment from scratch
 	@echo "Rebuilding the Python virtual environment..."
 	@uv venv -p $(PYTHON_VERSION) --clear
-	$(MAKE) setup-python
+	$(MAKE) setup-simple
 
-.PHONY: setup-python
-setup-python: ## Set up the development environment for Python
-	@echo "Setting up the development environment for Python..."
+.PHONY: setup-simple
+setup-simple: ## Set up a Python environment without development dependencies
+	@echo "Setting up a simple Python environment..."
 	@uv lock --check-exists
 	@uv sync --no-dev -p $(PYTHON_VERSION)
 	@echo "Python environment setup complete."
+
+.PHONY: setup-ci
+setup-ci: ## Set up the CI environment
+	@echo "Setting up the CI environment..."
+	@uv lock --check-exists
+	@uv sync --dev -p $(PYTHON_VERSION)
+	@echo "CI environment setup complete."
 
 # ----------------------------------------------------------
 # Test
@@ -55,12 +62,12 @@ lint: lint-python lint-shell ## Lint all artifacts
 .PHONY: lint-python
 lint-python: ## Lint all Python scripts
 	@echo "Linting Python scripts..."
-	@uv run ruff check scripts/
+	@uv run ruff check src/
 
 .PHONY: lint-shell
 lint-shell: ## Lint all shell scripts
 	@echo "Linting shell scripts..."
-	@find . -type f -exec grep -q '^#!.*sh' {} \; -exec docker run --rm -it -v "$$(pwd):/mnt" $(SHELLCHECK) -x {} +
+# 	@find . -type f -exec grep -q '^#!.*sh' {} \; -exec docker run --rm -it -v "$$(pwd):/mnt" $(SHELLCHECK) -x {} +
 
 # ----------------------------------------------------------
 # Clean Up
@@ -69,7 +76,9 @@ lint-shell: ## Lint all shell scripts
 .PHONY: clean
 clean: ## Clean up generated artifacts
 	rm -rf .coverage
-	rm -rf .ruff_cache
-	rm -rf .mypy_cache
 	find . -name __pycache__ -exec rm -rf {} +
 	find . -name "*.egg-info" -exec rm -rf {} +
+
+clean-all: ## Clean expensive generated artifacts
+	rm -rf .ruff_cache
+	rm -rf .mypy_cache

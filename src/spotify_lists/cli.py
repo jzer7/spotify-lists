@@ -6,9 +6,9 @@ from rich import box
 from rich.console import Console
 from rich.table import Table
 
-from src.auth import get_spotify_client
-from src.fetch import get_all_playlists_metadata, get_full_playlist
-from src.io import save_playlist
+from .auth import get_spotify_client
+from .fetch import get_all_playlists_metadata, get_full_playlist
+from .io import save_playlist
 
 console = Console()
 logger = logging.getLogger("cli")
