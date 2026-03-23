@@ -2,11 +2,15 @@ import logging
 from pathlib import Path
 
 import click
+from rich import box
+from rich.console import Console
+from rich.table import Table
 
 from src.auth import get_spotify_client
 from src.fetch import get_all_playlists_metadata, get_full_playlist
 from src.io import save_playlist
 
+console = Console()
 logger = logging.getLogger("cli")
 PLAYLISTS_DIR = Path("playlists")
 
@@ -35,8 +39,16 @@ def list_playlists() -> None:
     sp = get_spotify_client()
     playlists = get_all_playlists_metadata(sp)
 
+    table = Table(title="My Playlists", box=box.SIMPLE)
+    table.add_column("Name", style="cyan")
+    table.add_column("ID", style="dim")
+    table.add_column("Tracks", justify="right")
+    table.add_column("Public", justify="center")
+
     for pl in playlists:
-        logger.info(f"{pl['name']} (ID: {pl['id']}, Tracks: {pl['tracks_total']}, Public: {pl['public']})")
+        table.add_row(pl["name"], pl["id"], str(pl["tracks_total"]), "Yes" if pl["public"] else "No")
+
+    console.print(table)
 
 
 @cli.command()
