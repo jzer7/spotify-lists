@@ -53,11 +53,27 @@ def list_playlists() -> None:
 
 @cli.command()
 @click.option("--id", help="Playlist ID to download")
-def download(id: str) -> None:
+@click.option("--all", "download_all", is_flag=True, help="Download all playlists")
+def download(id: str | None, download_all: bool) -> None:
     """Download playlists to local YAML files."""
     sp = get_spotify_client()
 
-    logger.info(f"Downloading playlist {id}...")
-    pl = get_full_playlist(sp, id)
-    save_playlist(pl, PLAYLISTS_DIR)
-    logger.info(f"Playlist '{pl['name']}' saved to {PLAYLISTS_DIR / f'{pl["id"]}.yaml'}")
+    if id:
+        logger.info(f"Downloading playlist {id}...")
+        pl = get_full_playlist(sp, id)
+        save_playlist(pl, PLAYLISTS_DIR)
+        logger.info(f"Playlist '{pl.name}' saved to {PLAYLISTS_DIR / f'{pl.id}.yaml'}")
+        return
+
+    if download_all:
+        playlists_meta = get_all_playlists_metadata(sp)
+        for pl_meta in playlists_meta:
+            try:
+                pl = get_full_playlist(sp, pl_meta["id"])
+                save_playlist(pl, PLAYLISTS_DIR)
+                logger.info(f"Playlist '{pl.name}' saved to {PLAYLISTS_DIR / f'{pl.id}.yaml'}")
+            except Exception as e:
+                logger.error(f"Failed to download playlist {pl_meta['name']} ({pl_meta['id']}): {e}")
+        logger.info(f"Downloaded {len(playlists_meta)} playlists.")
+    else:
+        logger.error("Please specify --id or --all")
