@@ -4,7 +4,8 @@ from pathlib import Path
 import click
 
 from src.auth import get_spotify_client
-from src.fetch import get_all_playlists_metadata
+from src.fetch import get_all_playlists_metadata, get_full_playlist
+from src.io import save_playlist
 
 logger = logging.getLogger("cli")
 PLAYLISTS_DIR = Path("playlists")
@@ -36,3 +37,15 @@ def list_playlists() -> None:
 
     for pl in playlists:
         logger.info(f"{pl['name']} (ID: {pl['id']}, Tracks: {pl['tracks_total']}, Public: {pl['public']})")
+
+
+@cli.command()
+@click.option("--id", help="Playlist ID to download")
+def download(id: str) -> None:
+    """Download playlists to local YAML files."""
+    sp = get_spotify_client()
+
+    logger.info(f"Downloading playlist {id}...")
+    pl = get_full_playlist(sp, id)
+    save_playlist(pl, PLAYLISTS_DIR)
+    logger.info(f"Playlist '{pl['name']}' saved to {PLAYLISTS_DIR / f'{pl["id"]}.yaml'}")
