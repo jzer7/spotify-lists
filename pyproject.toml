@@ -17,19 +17,8 @@ requires-python = ">=3.12"
 
 [dependency-groups]
 dev = [
-    "bandit[toml]>=1.9.4",                                  # Security assessment
-    "hypothesis[cli]>=6.151.9",                             #
     "mypy>=1.19.1",                                         # Python typing
-    "pre-commit>=4.5.1",                                    #
-    "pytest-cov>=7.1.0",                                    # Test coverage
-    "pytest-mock>=3.15.1",                                  #
-    "pytest>=9.0.2",                                        # Testing framework
-    "python-call-graph>=2.1.6",                             #
     "ruff>=0.15.7",                                         # Linter and Formatter for Python
-    "ty>=0.0.24",                                           #
-    "types-psutil>=7.2.2.20260130",                         #
-    "uv-bump>=0.4.2",                                       # Update versions in pyproject.toml
-    "vulture>=2.15",                                        # Dead code analysis
     "types-pyyaml>=6.0.12.20250915",                        # Stub with types for PyYAML
 ]
 
