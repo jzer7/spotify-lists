@@ -19,7 +19,7 @@ requires-python = ">=3.12"
 dev = [
     "mypy>=1.19.1",                                         # Python typing
     "ruff>=0.15.7",                                         # Linter and Formatter for Python
-    "types-pyyaml>=6.0.12.20250915",                        # Stub with types for PyYAML
+    "types-pyyaml>=6.0.12.20260408",                        # Stub with types for PyYAML
 ]
 
 [project.urls]
