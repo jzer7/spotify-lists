@@ -28,9 +28,15 @@ def cli() -> None:
 @cli.command()
 def login() -> None:
     """Authenticate with Spotify."""
-    sp = get_spotify_client()
-    user = sp.current_user()
-    logger.info(f"Logged in as {user['display_name']} ({user['id']})")
+    try:
+        sp = get_spotify_client()
+        user = sp.current_user()
+        if not user or isinstance(user, dict) or "id" not in user:
+            logger.error("Failed to retrieve user information after login.")
+            return
+        logger.info(f"Logged in as {user['display_name']} ({user['id']})")
+    except Exception as e:
+        logger.error(f"Login failed: {e}")
 
 
 @cli.command("list")
