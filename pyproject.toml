@@ -6,10 +6,10 @@ authors         = [
 ]
 description     = "Work with Spotify Playlists"
 dependencies    = [
-    "click>=8.3.1",                                         # CLI framework
+    "click>=8.3.2",                                         # CLI framework
     "python-dotenv>=1.2.2",                                 #
     "pyyaml>=6.0.3",                                        #
-    "rich>=14.3.3",                                         # Console display and color
+    "rich>=15.0.0",                                         # Console display and color
     "spotipy>=2.26.0",                                      # Spotify API
 ]
 readme          = "README.md"
@@ -29,9 +29,9 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
-    "mypy>=1.19.1",                                         # Python typing
-    "ruff>=0.15.7",                                         # Linter and Formatter for Python
-    "types-pyyaml>=6.0.12.20250915",                        # Stub with types for PyYAML
+    "mypy>=1.20.1",                                         # Python typing
+    "ruff>=0.15.10",                                        # Linter and Formatter for Python
+    "types-pyyaml>=6.0.12.20260408",                        # Stub with types for PyYAML
 ]
 
 [project.scripts]
