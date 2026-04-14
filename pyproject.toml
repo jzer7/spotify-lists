@@ -1,10 +1,10 @@
 [project]
 name            = "spotify_lists"
 version         = "0.1.0"
-description     = "Work with Spotify Playlists"
 authors         = [
     { name = "Juan Rubio", email = "jcrubio@gmail.com" },
 ]
+description     = "Work with Spotify Playlists"
 dependencies    = [
     "click>=8.3.1",                                         # CLI framework
     "python-dotenv>=1.2.2",                                 #
@@ -17,8 +17,15 @@ requires-python = ">=3.12"
 license         = "MIT"
 license-files   = ["LICENSE"]
 classifiers     = [
+    "Development Status :: 3 - Alpha",
     "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: OS Independent",
 ]
+
+[build-system]
+requires      = ["uv_build >= 0.11.6, <0.12"]
+build-backend = "uv_build"
 
 [dependency-groups]
 dev = [

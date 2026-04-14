@@ -70,12 +70,20 @@ lint-shell: ## Lint all shell scripts
 # 	@find . -type f -exec grep -q '^#!.*sh' {} \; -exec docker run --rm -it -v "$$(pwd):/mnt" $(SHELLCHECK) -x {} +
 
 # ----------------------------------------------------------
+# Build
+# ----------------------------------------------------------
+
+.PHONY: build
+build: ## Build package
+	@uv build
+# ----------------------------------------------------------
 # Clean Up
 # ----------------------------------------------------------
 
 .PHONY: clean
 clean: ## Clean up generated artifacts
 	rm -rf .coverage
+	rm -rf dist/
 	find . -name __pycache__ -exec rm -rf {} +
 	find . -name "*.egg-info" -exec rm -rf {} +
 
