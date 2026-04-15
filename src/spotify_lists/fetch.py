@@ -65,5 +65,7 @@ def get_full_playlist(sp: spotipy.Spotify, playlist_id: str) -> Playlist:
         name=pl_data["name"],
         description=pl_data["description"] or "",
         public=pl_data["public"],
+        collaborative=pl_data["collaborative"],
+        owner_id=pl_data["owner"]["id"],
         tracks=tracks,
     )

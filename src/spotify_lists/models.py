@@ -19,6 +19,8 @@ class Playlist:
     name: str
     description: str = ""
     public: bool = False
+    collaborative: bool = False
+    owner_id: str = ""
     tracks: list[Track] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, str | bool | list[dict[str, str | None]]]:
@@ -27,5 +29,7 @@ class Playlist:
             "name": self.name,
             "description": self.description,
             "public": self.public,
+            "collaborative": self.collaborative,
+            "owner_id": self.owner_id,
             "tracks": [t.to_dict() for t in self.tracks],
         }
