@@ -12,7 +12,7 @@ endif
 BUILD_DATE := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 .PHONY: help
-help: ## Display help information for Makefile targets
+help: ## ❓ Display help information for Makefile targets
 	@echo "Available targets:"
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_-]+:.*?## / {printf "  \033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
@@ -21,72 +21,110 @@ help: ## Display help information for Makefile targets
 # ----------------------------------------------------------
 
 .PHONY: setup
-setup: setup-simple ## Set up the development environment
+setup: setup-simple ## ⚙️ Set up the development environment
 	@echo "Development environment setup complete."
 
 .PHONY: rebuild-venv
-rebuild-venv: ## Rebuild the Python virtual environment from scratch
+rebuild-venv: ## 🔄 Rebuild the Python virtual environment from scratch
 	@echo "Rebuilding the Python virtual environment..."
 	@uv venv -p $(PYTHON_VERSION) --clear
 	$(MAKE) setup-simple
 
 .PHONY: setup-simple
-setup-simple: ## Set up a Python environment without development dependencies
+setup-simple: ## ⚙️ Set up a Python environment without development dependencies
 	@echo "Setting up a simple Python environment..."
 	@uv lock --check-exists
 	@uv sync --no-dev -p $(PYTHON_VERSION)
 	@echo "Python environment setup complete."
 
 .PHONY: setup-ci
-setup-ci: ## Set up the CI environment
+setup-ci: ## ⚙️ Set up the CI environment
 	@echo "Setting up the CI environment..."
 	@uv lock --check-exists
 	@uv sync --dev -p $(PYTHON_VERSION)
 	@echo "CI environment setup complete."
 
 # ----------------------------------------------------------
-# Test
+# Checks
 # ----------------------------------------------------------
 
-.PHONY: test
-test: ## Run tests
+.PHONY: check
+check: ruff mypy test-unit ## 🔍 Run quick checks (lint, type checking, and unit tests)
+
+.PHONY: check-all
+check-all: static test ## 🔍 Run all checks (static analysis and tests)
+
+# ----------------------------------------------------------
+# Static Analysis
+# ----------------------------------------------------------
+
+.PHONY: static
+static: lint ruff mypy ## 🔍 Run all static analysis checks
+
 
 # ----------------------------------------------------------
 # Linting
 # ----------------------------------------------------------
 
-.PHONY: lint
-lint: lint-python lint-shell ## Lint all artifacts
+.PHONY: lint lint-python lint-shell
+lint: lint-python lint-shell ## 🧹 Lint all artifacts
 	@echo "Completed linting all artifacts."
 
-.PHONY: lint-python
-lint-python: ## Lint all Python scripts
-	@echo "Linting Python scripts..."
+lint-python: ruff ## 🧹 Lint all Python scripts with ruff
+lint-shell: shellcheck ## 🧹 Lint all shell scripts with shellcheck
+
+# ----------------------------------------------------------
+# Static analysis tools
+# ----------------------------------------------------------
+
+
+.PHONY: mypy
+mypy: ## 🧩 Type checking with mypy
+	@echo "Checking types with mypy..."
+	@uv run mypy src/
+
+.PHONY: ruff
+ruff: ## 🧹 Lint all Python scripts with ruff
+	@echo "Linting Python scripts with ruff..."
 	@uv run ruff check src/
 
-.PHONY: lint-shell
-lint-shell: ## Lint all shell scripts
-	@echo "Linting shell scripts..."
-# 	@find . -type f -exec grep -q '^#!.*sh' {} \; -exec docker run --rm -it -v "$$(pwd):/mnt" $(SHELLCHECK) -x {} +
+.PHONY: shellcheck
+shellcheck:  ## 🧹 Lint all shell scripts with shellcheck
+	@echo "Linting shell scripts with shellcheck..."
+	@find . -type f -not -path "./.git/*" -exec grep -q '^#!.*sh' {} \; -exec docker run --rm -it -v "$$(pwd):/mnt" $(SHELLCHECK) -x {} +
+
+# ----------------------------------------------------------
+# Test
+# ----------------------------------------------------------
+
+.PHONY: test
+test: test-unit test-e2e ## 🧪 Run tests
+
+.PHONY: test-unit
+test-unit: ## 🧪 Run unit tests
+
+.PHONY: test-e2e
+test-e2e: ## 🧪 Run end-to-end tests
 
 # ----------------------------------------------------------
 # Build
 # ----------------------------------------------------------
 
 .PHONY: build
-build: ## Build package
+build: ## 🚜 Build package
 	@uv build
+
 # ----------------------------------------------------------
 # Clean Up
 # ----------------------------------------------------------
 
 .PHONY: clean
-clean: ## Clean up generated artifacts
+clean: ## 🧹 Clean up generated artifacts
 	rm -rf .coverage
 	rm -rf dist/
 	find . -name __pycache__ -exec rm -rf {} +
 	find . -name "*.egg-info" -exec rm -rf {} +
 
-clean-all: ## Clean expensive generated artifacts
+clean-full: clean ## 🧹 Clean common and expensive artifacts
 	rm -rf .ruff_cache
 	rm -rf .mypy_cache
