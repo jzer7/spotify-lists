@@ -1,29 +1,30 @@
 from dataclasses import asdict, dataclass, field
-from typing import Optional
 
 
 @dataclass
 class Track:
+    id: str  # Spotify ID
     name: str
-    artist: str
+    artists: str
     uri: str
-    album: Optional[str] = None
+    album: str = ""
 
-    def to_dict(self) -> dict[str, str | None]:
+    def to_dict(self) -> dict[str, str]:
         return asdict(self)
 
 
 @dataclass
 class Playlist:
     id: str  # Spotify ID
+    owner_id: str
     name: str
     description: str = ""
     public: bool = False
     collaborative: bool = False
-    owner_id: str = ""
+    tracks_total: int = 0
     tracks: list[Track] = field(default_factory=list)
 
-    def to_dict(self) -> dict[str, str | bool | list[dict[str, str | None]]]:
+    def to_dict(self) -> dict[str, str | bool | list[dict[str, str]]]:
         return {
             "id": self.id,
             "name": self.name,

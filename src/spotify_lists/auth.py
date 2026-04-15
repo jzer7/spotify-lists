@@ -1,5 +1,5 @@
-import spotipy
 from dotenv import load_dotenv
+from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 
 # Load environment variables
@@ -19,9 +19,9 @@ def get_auth_manager() -> SpotifyOAuth:
     return SpotifyOAuth(scope=" ".join(SCOPES), open_browser=True)
 
 
-def get_spotify_client() -> spotipy.Spotify:
+def get_spotify_client() -> Spotify:
     """
     Returns an authenticated Spotify client.
     """
     auth_manager = get_auth_manager()
-    return spotipy.Spotify(auth_manager=auth_manager)
+    return Spotify(auth_manager=auth_manager)

@@ -50,6 +50,7 @@ directory = "coverage_html_report"
 branch = true
 
 [tool.mypy]
+mypy_path = "stubs"
 files = [
     "src",
     "tests",
