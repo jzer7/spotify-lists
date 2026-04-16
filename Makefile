@@ -111,8 +111,8 @@ test-e2e: ## 🧪 Run end-to-end tests
 	rm -f "playlists/Greatest Film Themes of All Time.yaml"
 	mkdir -p playlists
 	uv run listify download --id "6LFObuU0EvpaQLj1iueTHO"
-	test -f "playlists/Greatest Film Themes of All Time.yaml"
-	yq .owner_id "playlists/Greatest Film Themes of All Time.yaml" | grep "bbcmusicmagazine" || (echo "Owner ID does not match expected value" && exit 1)
+	test -f "playlists/playlist_6LFObuU0EvpaQLj1iueTHO.yaml"
+	yq .owner_id "playlists/playlist_6LFObuU0EvpaQLj1iueTHO.yaml" | grep "bbcmusicmagazine" || (echo "Owner ID does not match expected value" && exit 1)
 
 # ----------------------------------------------------------
 # Build
