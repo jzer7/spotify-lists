@@ -41,5 +41,5 @@ jobs:
       - name: Static analysis on tests
         run: make static
 
-      - name: Run tests on codebase
-        run: make test
+      - name: Run unit tests on codebase
+        run: make test-unit
