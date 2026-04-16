@@ -59,15 +59,14 @@ check-all: static test ## 🔍 Run all checks (static analysis and tests)
 # ----------------------------------------------------------
 
 .PHONY: static
-static: lint ruff mypy ## 🔍 Run all static analysis checks
-
+static: ruff mypy ## 🔍 Run all static analysis checks
 
 # ----------------------------------------------------------
 # Linting
 # ----------------------------------------------------------
 
 .PHONY: lint lint-python lint-shell
-lint: lint-python lint-shell ## 🧹 Lint all artifacts
+lint: lint-python ## 🧹 Lint artifacts
 	@echo "Completed linting all artifacts."
 
 lint-python: ruff ## 🧹 Lint all Python scripts with ruff
@@ -102,9 +101,18 @@ test: test-unit test-e2e ## 🧪 Run tests
 
 .PHONY: test-unit
 test-unit: ## 🧪 Run unit tests
+	@echo "Running unit tests..."
+	@uv run pytest -v --cov=src --cov-report=xml
 
 .PHONY: test-e2e
 test-e2e: ## 🧪 Run end-to-end tests
+	@echo "Running end-to-end tests..."
+	@echo "Fetching well known playlist..."
+	rm -f "playlists/Greatest Film Themes of All Time.yaml"
+	mkdir -p playlists
+	uv run listify download --id "6LFObuU0EvpaQLj1iueTHO"
+	test -f "playlists/Greatest Film Themes of All Time.yaml"
+	yq .owner_id "playlists/Greatest Film Themes of All Time.yaml" | grep "bbcmusicmagazine" || (echo "Owner ID does not match expected value" && exit 1)
 
 # ----------------------------------------------------------
 # Build

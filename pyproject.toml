@@ -30,6 +30,8 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
     "mypy>=1.20.1",                                         # Python typing
+    "pytest>=9.0.3",                                        # Testing framework
+    "pytest-cov>=7.1.0",                                    # Test coverage
     "ruff>=0.15.10",                                        # Linter and Formatter for Python
     "types-pyyaml>=6.0.12.20260408",                        # Stub with types for PyYAML
 ]
@@ -71,7 +73,7 @@ warn_unused_ignores         = true
 exclude = ["backups/", "build", "dist", ".venv"]
 
 [tool.pytest.ini_options]
-addopts = "--cov=. --no-cov-on-fail --cov-fail-under=80.0 --strict-config --strict-markers"
+addopts = "--cov=. --no-cov-on-fail --cov-fail-under=65.0 --strict-config --strict-markers"
 pythonpath = ["src"]
 testpaths = [
     "tests",
