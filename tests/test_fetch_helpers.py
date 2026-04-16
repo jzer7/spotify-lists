@@ -36,7 +36,7 @@ class TestKvIsType:
         assert _kv_is_type(d, "name", str) is False
 
     def test_non_dict_input(self) -> None:
-        assert _kv_is_type("not-a-dict", "name", str) is False  # type: ignore[arg-type]
+        assert _kv_is_type("not-a-dict", "name", str) is False
 
     def test_missing_key(self) -> None:
         d = {"id": "123"}
@@ -136,7 +136,8 @@ class TestTrackDictToTrack:
         assert _track_dict_to_track(valid_track_dict) is None
 
     def test_non_dict_input_returns_none(self) -> None:
-        assert _track_dict_to_track("not-a-dict") is None  # type: ignore[arg-type]
+        assert _track_dict_to_track("not-a-dict") is None  # type: ignore[arg-type]  # type: ignore[ty:invalid-argument-type]
+        assert _track_dict_to_track(88) is None  # type: ignore[arg-type]  # type: ignore[ty:invalid-argument-type]
 
 
 # ----------------------------------------------------------

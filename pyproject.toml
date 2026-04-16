@@ -74,7 +74,7 @@ warn_unused_ignores         = true
 exclude = ["backups/", "build", "dist", ".venv"]
 
 [tool.pytest.ini_options]
-addopts = "--cov=. --no-cov-on-fail --cov-fail-under=65.0 --strict-config --strict-markers"
+addopts = "--cov=. --no-cov-on-fail --cov-fail-under=80.0 --strict-config --strict-markers"
 pythonpath = ["src"]
 testpaths = [
     "tests",
@@ -84,6 +84,7 @@ testpaths = [
 line-length = 120
 src = [
     "src",
+    "tests",
 ]
 
 [tool.ruff.format]

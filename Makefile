@@ -79,13 +79,17 @@ lint-shell: shellcheck ## 🧹 Lint all shell scripts with shellcheck
 
 .PHONY: mypy
 mypy: ## 🧩 Type checking with mypy
-	@echo "Checking types with mypy..."
+	@echo "Checking types in Python scripts with mypy..."
 	@uv run mypy src/
+	@echo "Checking types in Python tests with mypy..."
+	@uv run mypy tests/
 
 .PHONY: ruff
 ruff: ## 🧹 Lint all Python scripts with ruff
 	@echo "Linting Python scripts with ruff..."
 	@uv run ruff check src/
+	@echo "Linting Python tests with ruff..."
+	@uv run ruff check tests/
 
 .PHONY: shellcheck
 shellcheck:  ## 🧹 Lint all shell scripts with shellcheck
