@@ -2,37 +2,18 @@
 
 from typing import Any
 
-import pytest
 from pytest_mock import MockerFixture
 
 from spotify_lists.fetch import (
     _artists_list_to_str,
     _kv_is_type,
+    _playlist_dict_to_playlist,
     _track_dict_to_track,
     _tracks_page_to_tracks_list,
 )
 from spotify_lists.models import Playlist, Track
 
-# ----------------------------------------------------------
-# Fixtures
-# ----------------------------------------------------------
-
-
-@pytest.fixture()
-def valid_artists() -> list[dict[str, Any]]:
-    return [{"name": "Miles Davis"}, {"name": "Bill Evans"}]
-
-
-@pytest.fixture()
-def valid_track_dict() -> dict[str, Any]:
-    return {
-        "id": "track-id-1",
-        "name": "Blue in Green",
-        "uri": "spotify:track:track-id-1",
-        "artists": [{"name": "Miles Davis"}],
-        "album": {"name": "Kind of Blue"},
-    }
-
+from .conftest import make_page, make_track_item
 
 # ----------------------------------------------------------
 # _kv_is_type
@@ -163,22 +144,6 @@ class TestTrackDictToTrack:
 # ----------------------------------------------------------
 
 
-def _make_track_item(track_id: str, name: str) -> dict[str, Any]:
-    return {
-        "track": {
-            "id": track_id,
-            "name": name,
-            "uri": f"spotify:track:{track_id}",
-            "artists": [{"name": "Some Artist"}],
-            "album": {"name": "Some Album"},
-        }
-    }
-
-
-def _make_page(items: list[dict[str, Any]]) -> dict[str, Any]:
-    return {"items": items}
-
-
 class TestTrackPageToTracks:
     def test_none_page_returns_empty(self, mocker: MockerFixture) -> None:
         sp = mocker.MagicMock()
@@ -187,7 +152,7 @@ class TestTrackPageToTracks:
     def test_single_page_single_track(self, mocker: MockerFixture) -> None:
         sp = mocker.MagicMock()
         sp.next.return_value = None
-        result = _tracks_page_to_tracks_list(sp, _make_page([_make_track_item("id-1", "Song A")]))
+        result = _tracks_page_to_tracks_list(sp, make_page([make_track_item("id-1", "Song A")]))
         assert len(result) == 1
         assert result[0].id == "id-1"
         assert result[0].name == "Song A"
@@ -195,14 +160,14 @@ class TestTrackPageToTracks:
     def test_single_page_multiple_tracks(self, mocker: MockerFixture) -> None:
         sp = mocker.MagicMock()
         sp.next.return_value = None
-        page = _make_page([_make_track_item("id-1", "Song A"), _make_track_item("id-2", "Song B")])
+        page = make_page([make_track_item("id-1", "Song A"), make_track_item("id-2", "Song B")])
         result = _tracks_page_to_tracks_list(sp, page)
         assert [t.id for t in result] == ["id-1", "id-2"]
 
     def test_multiple_pages_are_iterated(self, mocker: MockerFixture) -> None:
         sp = mocker.MagicMock()
-        page1 = _make_page([_make_track_item("id-1", "Song A")])
-        page2 = _make_page([_make_track_item("id-2", "Song B")])
+        page1 = make_page([make_track_item("id-1", "Song A")])
+        page2 = make_page([make_track_item("id-2", "Song B")])
         sp.next.side_effect = [page2, None]
         result = _tracks_page_to_tracks_list(sp, page1)
         assert [t.id for t in result] == ["id-1", "id-2"]
@@ -211,7 +176,7 @@ class TestTrackPageToTracks:
     def test_empty_items_list_returns_empty(self, mocker: MockerFixture) -> None:
         sp = mocker.MagicMock()
         sp.next.return_value = None
-        assert _tracks_page_to_tracks_list(sp, _make_page([])) == []
+        assert _tracks_page_to_tracks_list(sp, make_page([])) == []
 
     def test_malformed_page_missing_items_breaks_and_returns_empty(self, mocker: MockerFixture) -> None:
         sp = mocker.MagicMock()
@@ -222,7 +187,7 @@ class TestTrackPageToTracks:
     def test_track_item_missing_track_key_is_skipped(self, mocker: MockerFixture) -> None:
         sp = mocker.MagicMock()
         sp.next.return_value = None
-        page = _make_page([{"no_track_key": {}}, _make_track_item("id-1", "Song A")])
+        page = make_page([{"no_track_key": {}}, make_track_item("id-1", "Song A")])
         result = _tracks_page_to_tracks_list(sp, page)
         assert len(result) == 1
         assert result[0].id == "id-1"
@@ -230,10 +195,10 @@ class TestTrackPageToTracks:
     def test_malformed_track_dict_is_skipped(self, mocker: MockerFixture) -> None:
         sp = mocker.MagicMock()
         sp.next.return_value = None
-        page = _make_page(
+        page = make_page(
             [
                 {"track": {"id": "bad"}},  # missing required fields — _track_dict_to_track returns None
-                _make_track_item("id-1", "Song A"),
+                make_track_item("id-1", "Song A"),
             ]
         )
         result = _tracks_page_to_tracks_list(sp, page)
@@ -243,6 +208,114 @@ class TestTrackPageToTracks:
     def test_duplicate_track_appears_multiple_times(self, mocker: MockerFixture) -> None:
         sp = mocker.MagicMock()
         sp.next.return_value = None
-        page = _make_page([_make_track_item("id-1", "Song A"), _make_track_item("id-1", "Song A")])
+        page = make_page([make_track_item("id-1", "Song A"), make_track_item("id-1", "Song A")])
         result = _tracks_page_to_tracks_list(sp, page)
         assert len(result) == 2
+
+
+# ----------------------------------------------------------
+# _playlist_dict_to_playlist
+# ----------------------------------------------------------
+
+
+class TestPlaylistDictToPlaylist:
+    def test_valid_playlist(self, mocker: MockerFixture, valid_playlist_dict: dict[str, Any]) -> None:
+        sp = mocker.MagicMock()
+        pl = _playlist_dict_to_playlist(sp, valid_playlist_dict)
+        assert isinstance(pl, Playlist)
+        assert pl.id == "pl-id-1"
+        assert pl.name == "Kind of Blue"
+        assert pl.description == "A classic"
+        assert pl.public is True
+        assert pl.collaborative is False
+        assert pl.owner_id == "owner-1"
+        assert pl.tracks_total == 9
+        assert pl.tracks == []
+
+    def test_none_returns_none(self, mocker: MockerFixture) -> None:
+        sp = mocker.MagicMock()
+        assert _playlist_dict_to_playlist(sp, None) is None
+
+    def test_missing_id_returns_none(self, mocker: MockerFixture, valid_playlist_dict: dict[str, Any]) -> None:
+        sp = mocker.MagicMock()
+        del valid_playlist_dict["id"]
+        assert _playlist_dict_to_playlist(sp, valid_playlist_dict) is None
+
+    def test_missing_name_returns_none(self, mocker: MockerFixture, valid_playlist_dict: dict[str, Any]) -> None:
+        sp = mocker.MagicMock()
+        del valid_playlist_dict["name"]
+        assert _playlist_dict_to_playlist(sp, valid_playlist_dict) is None
+
+    def test_missing_owner_returns_none(self, mocker: MockerFixture, valid_playlist_dict: dict[str, Any]) -> None:
+        sp = mocker.MagicMock()
+        del valid_playlist_dict["owner"]
+        assert _playlist_dict_to_playlist(sp, valid_playlist_dict) is None
+
+    def test_owner_without_id_returns_none(self, mocker: MockerFixture, valid_playlist_dict: dict[str, Any]) -> None:
+        sp = mocker.MagicMock()
+        valid_playlist_dict["owner"] = {"display_name": "no id here"}
+        assert _playlist_dict_to_playlist(sp, valid_playlist_dict) is None
+
+    def test_missing_tracks_returns_none(self, mocker: MockerFixture, valid_playlist_dict: dict[str, Any]) -> None:
+        sp = mocker.MagicMock()
+        del valid_playlist_dict["tracks"]
+        assert _playlist_dict_to_playlist(sp, valid_playlist_dict) is None
+
+    def test_tracks_without_total_returns_none(
+        self, mocker: MockerFixture, valid_playlist_dict: dict[str, Any]
+    ) -> None:
+        sp = mocker.MagicMock()
+        valid_playlist_dict["tracks"] = {"items": []}
+        assert _playlist_dict_to_playlist(sp, valid_playlist_dict) is None
+
+    def test_missing_public_returns_none(self, mocker: MockerFixture, valid_playlist_dict: dict[str, Any]) -> None:
+        sp = mocker.MagicMock()
+        del valid_playlist_dict["public"]
+        assert _playlist_dict_to_playlist(sp, valid_playlist_dict) is None
+
+    def test_missing_collaborative_returns_none(
+        self, mocker: MockerFixture, valid_playlist_dict: dict[str, Any]
+    ) -> None:
+        sp = mocker.MagicMock()
+        del valid_playlist_dict["collaborative"]
+        assert _playlist_dict_to_playlist(sp, valid_playlist_dict) is None
+
+    def test_missing_description_defaults_to_empty_string(
+        self, mocker: MockerFixture, valid_playlist_dict: dict[str, Any]
+    ) -> None:
+        sp = mocker.MagicMock()
+        del valid_playlist_dict["description"]
+        pl = _playlist_dict_to_playlist(sp, valid_playlist_dict)
+        assert pl is not None
+        assert pl.description == ""
+
+    def test_get_tracks_false_does_not_fetch_tracks(
+        self, mocker: MockerFixture, valid_playlist_dict: dict[str, Any]
+    ) -> None:
+        sp = mocker.MagicMock()
+        pl = _playlist_dict_to_playlist(sp, valid_playlist_dict, get_tracks=False)
+        assert pl is not None
+        assert pl.tracks == []
+        sp.next.assert_not_called()
+
+    def test_get_tracks_true_fetches_tracks(self, mocker: MockerFixture, valid_playlist_dict: dict[str, Any]) -> None:
+        sp = mocker.MagicMock()
+        valid_playlist_dict["tracks"] = {
+            "total": 1,
+            "items": [
+                {
+                    "track": {
+                        "id": "t-1",
+                        "name": "So What",
+                        "uri": "spotify:track:t-1",
+                        "artists": [{"name": "Miles Davis"}],
+                        "album": {"name": "Kind of Blue"},
+                    }
+                }
+            ],
+        }
+        sp.next.return_value = None
+        pl = _playlist_dict_to_playlist(sp, valid_playlist_dict, get_tracks=True)
+        assert pl is not None
+        assert len(pl.tracks) == 1
+        assert pl.tracks[0].id == "t-1"
