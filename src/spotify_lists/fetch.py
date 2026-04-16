@@ -2,6 +2,7 @@ import logging
 from typing import Any
 
 from spotipy import Spotify
+from spotipy.exceptions import SpotifyException
 
 from .models import Playlist, Track
 
@@ -200,6 +201,9 @@ def get_one_playlist(
     """
     try:
         pl_dict = sp.playlist(playlist_id)
+    except SpotifyException as e:
+        logger.error(f"Spotify API error fetching playlist {playlist_id}: {e}")
+        raise ValueError(f"Failed to retrieve playlist data for ID {playlist_id}") from e
     except Exception as e:
         logger.error(f"Error fetching playlist {playlist_id}: {e}")
         raise ValueError(f"Failed to retrieve playlist data for ID {playlist_id}") from e
