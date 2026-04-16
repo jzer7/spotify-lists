@@ -49,7 +49,7 @@ setup-ci: ## ⚙️ Set up the CI environment
 # ----------------------------------------------------------
 
 .PHONY: check
-check: ruff mypy test-unit ## 🔍 Run quick checks (lint, type checking, and unit tests)
+check: ruff ty test-unit ## 🔍 Run quick checks (lint, type checking, and unit tests)
 
 .PHONY: check-all
 check-all: static test ## 🔍 Run all checks (static analysis and tests)
@@ -59,7 +59,7 @@ check-all: static test ## 🔍 Run all checks (static analysis and tests)
 # ----------------------------------------------------------
 
 .PHONY: static
-static: ruff mypy ## 🔍 Run all static analysis checks
+static: ruff mypy ty ## 🔍 Run all static analysis checks
 
 # ----------------------------------------------------------
 # Linting
@@ -76,6 +76,10 @@ lint-shell: shellcheck ## 🧹 Lint all shell scripts with shellcheck
 # Static analysis tools
 # ----------------------------------------------------------
 
+.PHONY: bandit
+bandit: ## 🔒 Security scan with bandit
+	@echo "Scanning code for security issues..."
+	@uv run bandit -c pyproject.toml -lll src/**/*.py
 
 .PHONY: mypy
 mypy: ## 🧩 Type checking with mypy
@@ -95,6 +99,13 @@ ruff: ## 🧹 Lint all Python scripts with ruff
 shellcheck:  ## 🧹 Lint all shell scripts with shellcheck
 	@echo "Linting shell scripts with shellcheck..."
 	@find . -type f -not -path "./.git/*" -exec grep -q '^#!.*sh' {} \; -exec docker run --rm -it -v "$$(pwd):/mnt" $(SHELLCHECK) -x {} +
+
+.PHONY: ty
+ty: ## 🧩 Type checking with Ty
+	@echo "Checking types in Python scripts with Ty..."
+	@uv run ty check -v src
+	@echo "Checking types in Python tests with Ty..."
+	@uv run ty check -v tests
 
 # ----------------------------------------------------------
 # Test
