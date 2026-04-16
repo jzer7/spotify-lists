@@ -7,6 +7,19 @@ from .models import Playlist, Track
 
 logger = logging.getLogger(__name__)
 
+# When retrieving collections, Spotify API paginates results.
+# The template for a "page" looks like:
+# {
+#     href:     <url_to_api_endpoint>
+#     limit:    <max_number_of_elements_per_page>
+#     offset:   <index_of_first_element_in_page>
+#     next:     <url_to_next_page> or None
+#     previous: <url_to_previous_page> or None
+#     total:    <total_number_of_elements>
+#     items:    [...]
+# }
+# The elements inside `items` are the actual playlists or tracks, their format and meaning depends on the endpoint.
+
 
 def _kv_is_type(
     obj: Any,
@@ -125,7 +138,11 @@ def _tracks_page_to_tracks_list(
         if not _kv_is_type(page, "items", list):
             logger.warning(f"Skipping malformed playlist items page: {page}")
             break
+        # A track can appear multiple times in a playlist.
+        # Each occurrence is a separate item in the `items` list.
         for tr_dict in page["items"]:
+            # tr_dict is an occurrence of a track. It contains the actual
+            # track info inside a "track" field.
             if not _kv_is_type(tr_dict, "track", dict):
                 logger.warning(f"Skipping malformed track item: {tr_dict}")
                 continue
