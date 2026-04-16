@@ -32,6 +32,7 @@ dev = [
     "mypy>=1.20.1",                                         # Python typing
     "pytest>=9.0.3",                                        # Testing framework
     "pytest-cov>=7.1.0",                                    # Test coverage
+    "pytest-mock>=3.15.1",
     "ruff>=0.15.10",                                        # Linter and Formatter for Python
     "types-pyyaml>=6.0.12.20260408",                        # Stub with types for PyYAML
 ]
