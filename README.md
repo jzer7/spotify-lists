@@ -1,5 +1,7 @@
 # Spotify Playlist Utilities
 
+[![Continuous Integration for Python](https://github.com/jzer7/spotify-lists/actions/workflows/ci-python.yml/badge.svg)](https://github.com/jzer7/spotify-lists/actions/workflows/ci-python.yml)
+
 Tools to work with your Spotify playlists.
 
 ## Features
