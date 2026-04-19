@@ -34,7 +34,7 @@ dev = [
     "pytest>=9.0.3",                                        # Testing framework
     "pytest-cov>=7.1.0",                                    # Test coverage
     "pytest-mock>=3.15.1",
-    "ruff>=0.15.10",                                        # Linter and Formatter for Python
+    "ruff>=0.15.11",                                        # Linter and Formatter for Python
     "ty>=0.0.31",                                           #
     "types-pyyaml>=6.0.12.20260408",                        # Stub with types for PyYAML
 ]
