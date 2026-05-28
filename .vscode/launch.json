@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "module spotify_lists list",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "spotify_lists",
+            "args": ["list"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "module spotify_lists download one playlist",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "spotify_lists",
+            "args": ["download", "--id", "1bqj2AieDEh313MTRePFBz"],
+            "console": "integratedTerminal"
+        }
+    ]
+}

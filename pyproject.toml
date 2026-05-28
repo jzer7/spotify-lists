@@ -1,26 +1,26 @@
 [project]
 name            = "spotify_lists"
 version         = "0.1.0"
+description     = "Work with Spotify Playlists"
 authors         = [
     { name = "Juan Rubio", email = "jcrubio@gmail.com" },
 ]
-description     = "Work with Spotify Playlists"
-dependencies    = [
-    "click>=8.4.1",                                         # CLI framework
-    "python-dotenv>=1.2.2",                                 #
-    "pyyaml>=6.0.3",                                        #
-    "rich>=15.0.0",                                         # Console display and color
-    "spotipy>=2.26.0",                                      # Spotify API
-]
-readme          = "README.md"
-requires-python = ">=3.12"
 license         = "MIT"
 license-files   = ["LICENSE"]
+readme          = "README.md"
 classifiers     = [
     "Development Status :: 3 - Alpha",
     "Environment :: Console",
     "Intended Audience :: End Users/Desktop",
     "Operating System :: OS Independent",
+]
+requires-python = ">=3.12"
+dependencies    = [
+    "click>=8.4.1",                                         # CLI framework
+    "python-dotenv>=1.2.2",                                 # Read a .env file
+    "pyyaml>=6.0.3",                                        # YAML parser/emitter
+    "rich>=15.0.0",                                         # Console display and color
+    "spotipy>=2.26.0",                                      # Spotify API
 ]
 
 [build-system]
@@ -32,11 +32,12 @@ dev = [
     "bandit[toml]>=1.9.4",                                  # Security assessment
     "mypy>=2.1.0",                                          # Python typing
     "pytest>=9.0.3",                                        # Testing framework
-    "pytest-cov>=7.1.0",                                    # Test coverage
-    "pytest-mock>=3.15.1",
-    "ruff>=0.15.15",                                        # Linter and Formatter for Python
-    "ty>=0.0.40",                                           #
+    "pytest-cov>=7.1.0",                                    # Coverage plugin for pytest
+    "pytest-mock>=3.15.1",                                  # Mocking plugin for pytest
+    "ruff>=0.15.15",                                        # Linter and formatter
+    "ty>=0.0.40",                                           # Type checker and language server (by Astral)
     "types-pyyaml>=6.0.12.20260518",                        # Stub with types for PyYAML
+    "types-requests>=2.33.0.20260408",                      # Stub with types for 'requests'
 ]
 
 [project.scripts]

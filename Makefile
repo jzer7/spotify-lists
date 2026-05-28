@@ -45,21 +45,21 @@ setup-ci: ## ⚙️ Set up the CI environment
 	@echo "CI environment setup complete."
 
 # ----------------------------------------------------------
-# Checks
+# QA
 # ----------------------------------------------------------
 
-.PHONY: check
-check: ruff ty test-unit ## 🔍 Run quick checks (lint, type checking, and unit tests)
+.PHONY: qa
+qa: ruff ty test-unit ## 🔍 Run quick QA checks (lint, type checking, and unit tests)
 
-.PHONY: check-all
-check-all: static test ## 🔍 Run all checks (static analysis and tests)
+.PHONY: qa-all
+qa-all: static test ## 🔍 Run all QA checks (static analysis and tests)
 
 # ----------------------------------------------------------
 # Static Analysis
 # ----------------------------------------------------------
 
 .PHONY: static
-static: ruff mypy ty ## 🔍 Run all static analysis checks
+static: ruff mypy ty bandit ## 🔍 Run all static analysis checks
 
 # ----------------------------------------------------------
 # Linting
@@ -123,7 +123,7 @@ test-unit: ## 🧪 Run unit tests
 test-e2e: ## 🧪 Run end-to-end tests
 	@echo "Running end-to-end tests..."
 	@echo "Fetching well known playlist..."
-	rm -f "playlists/Greatest Film Themes of All Time.yaml"
+	$(RM) "playlists/Greatest Film Themes of All Time.yaml"
 	mkdir -p playlists
 	uv run listify download --id "6LFObuU0EvpaQLj1iueTHO"
 	test -f "playlists/playlist_6LFObuU0EvpaQLj1iueTHO.yaml"
@@ -143,11 +143,12 @@ build: ## 🚜 Build package
 
 .PHONY: clean
 clean: ## 🧹 Clean up generated artifacts
-	rm -rf .coverage
-	rm -rf dist/
+	$(RM) -r .coverage
+	$(RM) coverage.xml
+	$(RM) -r dist/
 	find . -name __pycache__ -exec rm -rf {} +
 	find . -name "*.egg-info" -exec rm -rf {} +
 
-clean-full: clean ## 🧹 Clean common and expensive artifacts
-	rm -rf .ruff_cache
-	rm -rf .mypy_cache
+distclean: clean ## 🧹 Clean common and expensive artifacts
+	$(RM) -r .ruff_cache
+	$(RM) -r .mypy_cache
