@@ -27,10 +27,10 @@ jobs:
 
     steps:
       - name: Check out the code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # https://github.com/actions/checkout/releases/tag/v6.0.2
 
       - name: Setup uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # https://github.com/astral-sh/setup-uv/releases/tag/v8.1.0
         with:
           version: "latest"
           python-version: ${{ matrix.python-version }}
@@ -38,7 +38,7 @@ jobs:
       - name: Install Python dependencies
         run: make setup-ci
 
-      - name: Static analysis on tests
+      - name: Static analysis
         run: make static
 
       - name: Run unit tests on codebase
