@@ -10,49 +10,59 @@ Tools to work with your Spotify playlists.
 
 ## Setup
 
-1. **Install dependencies**:
+1. Install dependencies:
 
-    ```bash
-    uv sync
-    ```
+   ```sh
+   uv sync --dev
+   ```
 
-2. **Configure Environment**:
+2. Configure environment:
 
-    Copy `.env.example` to `.env` and fill in your Spotify App credentials.
-    You can create an app at [Spotify Developer Dashboard](https://developer.spotify.com/dashboard).
+   Copy `.env.example` to `.env` and fill in your Spotify App credentials.
+   You can create an app at
+   [Spotify Developer Dashboard](https://developer.spotify.com/dashboard).
 
-    ```bash
-    cp .env.example .env
-    ```
+   ```sh
+   cp .env.example .env
+   ```
 
-    Make sure to add `http://127.0.0.1:8888/callback` as a Redirect URI in your Spotify App settings.
-    Note: `localhost` is no longer supported by Spotify; use `127.0.0.1` instead.
+   Make sure to add `http://127.0.0.1:8888/callback` as a Redirect URI in
+   your Spotify App settings.
+   Use `127.0.0.1` instead of `localhost` in Spotify app settings.
 
-    The CLI is available as `python -m spotify_lists`.
-    For convenience, the CLI is also available as `listify` (if installed).
+3. Run the CLI:
+
+   ```sh
+   uv run listify --help
+   # or
+   uv run python -m spotify_lists --help
+   ```
 
 ## Usage
 
 Authenticate with Spotify (opens a browser window):
 
-```bash
-listify login
+```sh
+uv run listify login
 ```
 
 Show all your playlists:
 
-```bash
-listify list
+```sh
+uv run listify list
 ```
 
 Download all playlists to `playlists/` directory:
 
-```bash
-listify download --all
+```sh
+uv run listify download --all
 ```
 
 Or download a specific playlist by ID:
 
-```bash
-listify download --id <spotify_playlist_id>
+```sh
+uv run listify download --id <spotify_playlist_id>
+```
+
+Downloaded files are saved as `playlist_<playlist_id>.yaml` under `playlists/`.
 ```

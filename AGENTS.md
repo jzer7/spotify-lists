@@ -28,7 +28,8 @@ stubs/spotipy/       # Type stubs for spotipy (not covered by typeshed)
 | Python 3.12+ | Language |
 | uv | Dependency and virtual environment management |
 | ruff | Linting and formatting |
-| mypy | Static type checking |
+| mypy / ty | Static type checking |
+| bandit | Security scanning |
 | pytest + pytest-cov | Testing and coverage |
 | make | Task runner |
 
@@ -48,12 +49,14 @@ Required environment variables (see `.env.example`):
 ## Common Commands
 
 ```bash
-make check        # Lint (ruff), type check (mypy), unit tests — fast feedback loop
-make check-all    # Full static analysis + all tests
+make qa           # Lint (ruff), type check (ty), unit tests — fast feedback loop
+make qa-all       # Full static analysis + all tests
 make test-unit    # Unit tests only
 make test-e2e     # End-to-end test against live Spotify API
 make ruff         # Lint with ruff
 make mypy         # Type check with mypy
+make ty           # Type check with ty
+make bandit       # Security scan
 make clean        # Remove build artifacts and caches
 ```
 
