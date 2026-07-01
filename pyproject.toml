@@ -95,3 +95,4 @@ docstring-code-format = true
 
 [tool.uv]
 package = true
+exclude-newer = "7 days"
