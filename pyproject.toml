@@ -37,7 +37,7 @@ dev = [
     "ruff>=0.15.19",                                        # Linter and formatter
     "ty>=0.0.53",                                           # Type checker and language server (by Astral)
     "types-pyyaml>=6.0.12.20260518",                        # Stub with types for PyYAML
-    "types-requests>=2.33.0.20260518",                      # Stub with types for 'requests'
+    "types-requests>=2.33.0.20260712",                      # Stub with types for 'requests'
 ]
 
 [project.scripts]
